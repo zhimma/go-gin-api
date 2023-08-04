@@ -1,18 +1,18 @@
 package router
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/internal/render/admin"
-	"github.com/xinliangnote/go-gin-api/internal/render/article"
-	"github.com/xinliangnote/go-gin-api/internal/render/authorized"
-	"github.com/xinliangnote/go-gin-api/internal/render/config"
-	"github.com/xinliangnote/go-gin-api/internal/render/cron"
-	"github.com/xinliangnote/go-gin-api/internal/render/dashboard"
-	"github.com/xinliangnote/go-gin-api/internal/render/generator"
-	"github.com/xinliangnote/go-gin-api/internal/render/index"
-	"github.com/xinliangnote/go-gin-api/internal/render/install"
-	"github.com/xinliangnote/go-gin-api/internal/render/tool"
-	"github.com/xinliangnote/go-gin-api/internal/render/upgrade"
+	"github.com/zhimma/go-gin-api/internal/pkg/core"
+	"github.com/zhimma/go-gin-api/internal/render/admin"
+	"github.com/zhimma/go-gin-api/internal/render/article"
+	"github.com/zhimma/go-gin-api/internal/render/authorized"
+	"github.com/zhimma/go-gin-api/internal/render/config"
+	"github.com/zhimma/go-gin-api/internal/render/cron"
+	"github.com/zhimma/go-gin-api/internal/render/dashboard"
+	"github.com/zhimma/go-gin-api/internal/render/generator"
+	"github.com/zhimma/go-gin-api/internal/render/index"
+	"github.com/zhimma/go-gin-api/internal/render/install"
+	"github.com/zhimma/go-gin-api/internal/render/tool"
+	"github.com/zhimma/go-gin-api/internal/render/upgrade"
 )
 
 func setRenderRouter(r *resource) {

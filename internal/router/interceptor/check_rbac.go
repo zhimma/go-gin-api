@@ -2,13 +2,13 @@ package interceptor
 
 import (
 	"encoding/json"
-	"github.com/xinliangnote/go-gin-api/configs"
-	"github.com/xinliangnote/go-gin-api/internal/code"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
-	"github.com/xinliangnote/go-gin-api/internal/services/admin"
-	"github.com/xinliangnote/go-gin-api/pkg/errors"
-	"github.com/xinliangnote/go-gin-api/pkg/urltable"
+	"github.com/zhimma/go-gin-api/configs"
+	"github.com/zhimma/go-gin-api/internal/code"
+	"github.com/zhimma/go-gin-api/internal/pkg/core"
+	"github.com/zhimma/go-gin-api/internal/repository/redis"
+	"github.com/zhimma/go-gin-api/internal/services/admin"
+	"github.com/zhimma/go-gin-api/pkg/errors"
+	"github.com/zhimma/go-gin-api/pkg/urltable"
 	"net/http"
 )
 

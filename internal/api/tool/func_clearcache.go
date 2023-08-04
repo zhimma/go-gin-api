@@ -3,9 +3,9 @@ package tool
 import (
 	"net/http"
 
-	"github.com/xinliangnote/go-gin-api/internal/code"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
+	"github.com/zhimma/go-gin-api/internal/code"
+	"github.com/zhimma/go-gin-api/internal/pkg/core"
+	"github.com/zhimma/go-gin-api/internal/repository/redis"
 )
 
 type clearCacheRequest struct {

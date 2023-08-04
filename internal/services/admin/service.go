@@ -1,10 +1,10 @@
 package admin
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
-	"github.com/xinliangnote/go-gin-api/internal/repository/mysql/admin"
-	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
+	"github.com/zhimma/go-gin-api/internal/pkg/core"
+	"github.com/zhimma/go-gin-api/internal/repository/mysql"
+	"github.com/zhimma/go-gin-api/internal/repository/mysql/admin"
+	"github.com/zhimma/go-gin-api/internal/repository/redis"
 )
 
 var _ Service = (*service)(nil)

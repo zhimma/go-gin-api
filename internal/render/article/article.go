@@ -1,9 +1,9 @@
 package article
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
-	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
+	"github.com/zhimma/go-gin-api/internal/pkg/core"
+	"github.com/zhimma/go-gin-api/internal/repository/mysql"
+	"github.com/zhimma/go-gin-api/internal/repository/redis"
 
 	"go.uber.org/zap"
 )

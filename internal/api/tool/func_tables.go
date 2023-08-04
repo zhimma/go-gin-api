@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/xinliangnote/go-gin-api/internal/code"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
+	"github.com/zhimma/go-gin-api/internal/code"
+	"github.com/zhimma/go-gin-api/internal/pkg/core"
 )
 
 type tablesRequest struct {

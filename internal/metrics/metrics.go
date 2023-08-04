@@ -1,7 +1,7 @@
 package metrics
 
 import (
-	"github.com/xinliangnote/go-gin-api/internal/proposal"
+	"github.com/zhimma/go-gin-api/internal/proposal"
 
 	"go.uber.org/zap"
 )

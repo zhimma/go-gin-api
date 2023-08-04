@@ -8,8 +8,8 @@ import (
 	httpURL "net/url"
 	"time"
 
-	"github.com/xinliangnote/go-gin-api/pkg/errors"
-	"github.com/xinliangnote/go-gin-api/pkg/trace"
+	"github.com/zhimma/go-gin-api/pkg/errors"
+	"github.com/zhimma/go-gin-api/pkg/trace"
 )
 
 const (

@@ -5,8 +5,8 @@ import (
 	"gorm.io/gorm/logger"
 	"time"
 
-	"github.com/xinliangnote/go-gin-api/configs"
-	"github.com/xinliangnote/go-gin-api/pkg/errors"
+	"github.com/zhimma/go-gin-api/configs"
+	"github.com/zhimma/go-gin-api/pkg/errors"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

@@ -1,13 +1,13 @@
 package cron
 
 import (
-	"github.com/xinliangnote/go-gin-api/configs"
-	"github.com/xinliangnote/go-gin-api/internal/pkg/core"
-	cronRepo "github.com/xinliangnote/go-gin-api/internal/repository/cron"
-	"github.com/xinliangnote/go-gin-api/internal/repository/mysql"
-	"github.com/xinliangnote/go-gin-api/internal/repository/redis"
-	"github.com/xinliangnote/go-gin-api/internal/services/cron"
-	"github.com/xinliangnote/go-gin-api/pkg/hash"
+	"github.com/zhimma/go-gin-api/configs"
+	"github.com/zhimma/go-gin-api/internal/pkg/core"
+	cronRepo "github.com/zhimma/go-gin-api/internal/repository/cron"
+	"github.com/zhimma/go-gin-api/internal/repository/mysql"
+	"github.com/zhimma/go-gin-api/internal/repository/redis"
+	"github.com/zhimma/go-gin-api/internal/services/cron"
+	"github.com/zhimma/go-gin-api/pkg/hash"
 
 	"go.uber.org/zap"
 )
