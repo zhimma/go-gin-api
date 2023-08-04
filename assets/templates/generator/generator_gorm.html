@@ -76,6 +76,7 @@
       }
 
       $.post("/generator/gorm/execute",{tables:tables.join(',')},function (data) {
+                    data = data.data
         $("#resultDiv").text(data);
         $("#btnLoading").hide();
         $("#btnOk").show();

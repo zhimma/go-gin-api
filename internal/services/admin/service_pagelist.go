@@ -29,7 +29,6 @@ func (s *service) PageList(ctx core.Context, searchData *SearchData) (listData [
 	offset := (page - 1) * pageSize
 
 	qb := admin.NewQueryBuilder()
-	qb.WhereIsDeleted(mysql.EqualPredicate, -1)
 
 	if searchData.Username != "" {
 		qb.WhereUsername(mysql.EqualPredicate, searchData.Username)

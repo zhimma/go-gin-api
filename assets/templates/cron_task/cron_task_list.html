@@ -91,6 +91,7 @@
                 function () {
                 },
                 function (data) {
+                    data = data.data
                     if (data.list.length > 0) {
                         var totalNum = data.pagination.total; //总条数
                         var pageNum = Math.ceil(totalNum / data.pagination.per_page_count); //分页的总页数
@@ -225,6 +226,7 @@
                                 function () {
                                 },
                                 function (data) {
+                    data = data.data
                                     $.alert({
                                         title: '操作成功',
                                         icon: 'mdi mdi-check-decagram',
@@ -291,6 +293,7 @@
                                 function () {
                                 },
                                 function (data) {
+                    data = data.data
                                     $.alert({
                                         title: '操作成功',
                                         icon: 'mdi mdi-check-decagram',

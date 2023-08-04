@@ -96,6 +96,7 @@
                     
                 },
                 function (data) {
+                    data = data.data
                     $("#businessKey").html("（授权方：" + data.business_key + "）");
                     if (data.list.length > 0) {
                         var badgeMethodClass = "";

@@ -66,6 +66,7 @@
       $("#btnLoading").show();
 
       $.post("/generator/handler/execute",{name:handlerName},function (data) {
+                    data = data.data
         $("#resultDiv").text(data);
         $("#btnLoading").hide();
         $("#btnOk").show();

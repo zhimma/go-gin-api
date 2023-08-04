@@ -16,24 +16,41 @@
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title">个人信息</div>
+                    <div class="card-title">新增文章</div>
                 </div>
                 <div class="card-body">
-
-                    <form class="site-form">
+                    <form>
                         <div class="form-group">
-                            <label>用户名</label>
-                            <input type="text" class="form-control" id="username" disabled="disabled">
+                            <label>文章标题</label>
+                            <input type="text" class="form-control" maxlength="10" id="title"
+                                   placeholder="请输入文章标题">
                         </div>
                         <div class="form-group">
-                            <label>昵称</label>
-                            <input type="text" class="form-control" maxlength="10" id="nickname" placeholder="输入您的昵称">
+                            <label>文章简介</label>
+                            <input type="text" class="form-control" maxlength="10" id="short_title"
+                                   placeholder="请输入文章简介">
                         </div>
                         <div class="form-group">
-                            <label>手机号</label>
-                            <input type="text" class="form-control" maxlength="11" id="mobile" placeholder="请输入您的手机号">
+                            <label>文章主图</label>
+                            <input type="text" class="form-control" maxlength="11" id="main_image"
+                                   placeholder="请上传文章主图">
                         </div>
-                        <button type="button" id="btnOk" class="btn btn-primary">保存</button>
+                        <div class="form-group">
+                            <label>文章正文</label>
+                            <input type="text" class="form-control" maxlength="20" id="content"
+                                   placeholder="请输入文章正文">
+                        </div>
+                        <div class="form-group">
+                            <label>排序</label>
+                            <input type="number" class="form-control" id="sort"
+                                   placeholder="请输入排序">
+                        </div>
+                        <div class="form-group">
+                            <label>状态</label>
+                            <input type="number" class="form-control" id="status"
+                                   placeholder="请选择状态">
+                        </div>
+                        <button type="button" id="btnOk" class="btn btn-primary">确认</button>
                         <button type="button" id="btnLoading" class="btn btn-primary" disabled style="display: none">
                             <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
                             执行中...
@@ -50,56 +67,82 @@
 <script type="text/javascript" src="/assets/bootstrap/js/jquery-confirm/jquery-confirm.min.js"></script>
 <script type="text/javascript" src="/assets/bootstrap/js/bootstrap-multitabs/multitabs.min.js"></script>
 <script type="text/javascript" src="/assets/bootstrap/js/httpclient/httpclient.js"></script>
+<script type="text/javascript" src="/assets/bootstrap/js/authorization/md5.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
 
-        $("input#nickname, input#mobile").maxlength({
+        $("input#username").maxlength({
             warningClass: "badge badge-info",
             limitReachedClass: "badge badge-warning"
         });
 
-        AjaxForm(
-            "GET",
-            "/api/admin/info",
-            "",
-            function () {},
-            function (data) {
-                    data = data.data
-                $("#username").val(data.username);
-                $("#nickname").val(data.nickname);
-                $("#mobile").val(data.mobile);
-            },
-            function (response) {
-                AjaxError(response);
-            }
-        );
+        $("input#nickname").maxlength({
+            warningClass: "badge badge-info",
+            limitReachedClass: "badge badge-warning"
+        });
+
+        $("input#mobile").maxlength({
+            warningClass: "badge badge-info",
+            limitReachedClass: "badge badge-warning"
+        });
+
+        $("input#password").maxlength({
+            warningClass: "badge badge-info",
+            limitReachedClass: "badge badge-warning"
+        });
 
         $('#btnOk').on('click', function () {
+            const username = $("#username").val();
+            if (username === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入用户名。',
+                });
+                return false;
+            }
+
             const nickname = $("#nickname").val();
             if (nickname === "") {
                 $.alert({
                     title: '温馨提示',
                     icon: 'mdi mdi-alert',
                     type: 'orange',
-                    content: '请输入您的昵称。',
+                    content: '请输入昵称。',
+                });
+                return false;
+            }
+
+            const password = $("#password").val();
+            if (password === "") {
+                $.alert({
+                    title: '温馨提示',
+                    icon: 'mdi mdi-alert',
+                    type: 'orange',
+                    content: '请输入密码。',
                 });
                 return false;
             }
 
             const postData = {
+                username: username,
                 nickname: nickname,
                 mobile: $("#mobile").val(),
+                password: md5(password),
             };
 
+
             AjaxForm(
-                "PATCH",
-                "/api/admin/modify_personal_info",
+                "POST",
+                "/api/admin",
                 postData,
                 function () {
                     $(this).hide();
                     $("#btnLoading").show();
                 },
-                function () {
+                function (data) {
+                    data = data.data
                     $("#btnLoading").hide();
                     $("#btnOk").show();
 
@@ -107,12 +150,12 @@
                         title: '操作成功',
                         icon: 'mdi mdi-check-decagram',
                         type: 'green',
-                        content: '信息修改成功。',
+                        content: '编号：' + data.id + ' 创建完成。',
                         buttons: {
                             okay: {
                                 text: '关闭',
                                 action: function () {
-                                    location.reload();
+                                    location.href = "/admin/list";
                                 }
                             }
                         }

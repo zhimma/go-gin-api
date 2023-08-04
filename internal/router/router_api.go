@@ -2,6 +2,7 @@ package router
 
 import (
 	"github.com/xinliangnote/go-gin-api/internal/api/admin"
+	"github.com/xinliangnote/go-gin-api/internal/api/article"
 	"github.com/xinliangnote/go-gin-api/internal/api/authorized"
 	"github.com/xinliangnote/go-gin-api/internal/api/config"
 	"github.com/xinliangnote/go-gin-api/internal/api/cron"
@@ -99,5 +100,9 @@ func setApiRouter(r *resource) {
 		api.PATCH("/cron/used", cronHandler.UpdateUsed())
 		api.PATCH("/cron/exec/:id", core.AliasForRecordMetrics("/api/cron/exec"), cronHandler.Execute())
 
+		// article
+		articleHandler := article.New(r.logger, r.db, r.cache)
+		api.GET("/articles", articleHandler.Index())
+		api.GET("/articles/:id", articleHandler.Show())
 	}
 }

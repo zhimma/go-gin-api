@@ -329,10 +329,6 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 
 	mux.engine.Use(func(ctx *gin.Context) {
 
-		if ctx.Writer.Status() == http.StatusNotFound {
-			return
-		}
-
 		ts := time.Now()
 
 		context := newContext(ctx)
@@ -391,6 +387,16 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 			}
 			// endregion
 
+			if ctx.Writer.Status() == http.StatusNotFound {
+				response = &code.ResponseData{
+					Code:      http.StatusNotFound,
+					Message:   http.StatusText(http.StatusNotFound),
+					RequestId: traceId,
+					Data:      nil,
+				}
+				ctx.JSON(http.StatusNotFound, response)
+			}
+
 			// region 发生错误，进行返回
 			if ctx.IsAborted() {
 				for i := range ctx.Errors {
@@ -418,9 +424,11 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 					multierr.AppendInto(&abortErr, err.StackError())
 					businessCode = err.BusinessCode()
 					businessCodeMsg = err.Message()
-					response = &code.Failure{
-						Code:    businessCode,
-						Message: businessCodeMsg,
+					response = &code.ResponseData{
+						Code:      businessCode,
+						Message:   businessCodeMsg,
+						RequestId: traceId,
+						Data:      nil,
 					}
 					ctx.JSON(err.HTTPCode(), response)
 				}
@@ -430,6 +438,12 @@ func New(logger *zap.Logger, options ...Option) (Mux, error) {
 			// region 正确返回
 			response = context.getPayload()
 			if response != nil {
+				response = &code.ResponseData{
+					Code:      businessCode,
+					Message:   "ok",
+					RequestId: traceId,
+					Data:      response,
+				}
 				ctx.JSON(http.StatusOK, response)
 			}
 			// endregion

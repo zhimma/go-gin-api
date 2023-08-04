@@ -100,6 +100,7 @@
             function () {
             },
             function (data) {
+                    data = data.data
                 $("#level").append("<option value='-1'>一级目录</option>");
                 $.each(data.list, function (index, value) {
                     $("#level").append("<option value='" + value.id + "'>" + value.name + "</option>");
@@ -283,6 +284,7 @@
                 function () {
                 },
                 function (data) {
+                    data = data.data
                     if (op === 'add') {
                         $('#level').selectpicker('val', data.id);
                         $("#level").selectpicker('refresh');

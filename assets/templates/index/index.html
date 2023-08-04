@@ -227,6 +227,7 @@
             "",
             function () {},
             function (data) {
+                    data = data.data
                 $("#nickname").html(data.nickname);
                 $(".nav-drawer").html("");
                 let li = '<li class="nav-item active"><a class="multitabs" href="/dashboard"><i class="mdi mdi-home"></i> <span>仪表盘</span></a></li>';

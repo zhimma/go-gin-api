@@ -11,7 +11,6 @@ import (
 	"github.com/xinliangnote/go-gin-api/internal/router/interceptor"
 	"github.com/xinliangnote/go-gin-api/pkg/errors"
 	"github.com/xinliangnote/go-gin-api/pkg/file"
-
 	"go.uber.org/zap"
 )
 
@@ -70,7 +69,7 @@ func NewHTTPServer(logger *zap.Logger, cronLogger *zap.Logger) (*Server, error) 
 	}
 
 	mux, err := core.New(logger,
-		core.WithEnableOpenBrowser(openBrowserUri),
+		// core.WithEnableOpenBrowser(openBrowserUri),
 		core.WithEnableCors(),
 		core.WithEnableRate(),
 		core.WithAlertNotify(alert.NotifyHandler(logger)),

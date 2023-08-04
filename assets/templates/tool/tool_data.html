@@ -116,6 +116,7 @@
             function () {
             },
             function (data) {
+                    data = data.data
                 $.each(data.list, function (index, value) {
                     $("#db").append("<option value='" + value.db_name + "'>" + value.db_name + "</option>");
                 });
@@ -237,6 +238,7 @@
                 function () {
                 },
                 function (data) {
+                    data = data.data
                     $("#thead-tr").html("");
                     $.each(data.cols, function (index, value) {
                         let thHtml = "<th>" + value;
@@ -274,6 +276,7 @@
                 function () {
                 },
                 function (data) {
+                    data = data.data
                     $.each(data.list, function (index, value) {
                         $("#table").append("<option value='" + value.table_name + "' data-subtext='" + value.table_comment + "'>" + value.table_name + "</option>");
                     });

@@ -17,7 +17,7 @@
             <div class="card">
                 <div class="card-toolbar d-flex flex-column flex-md-row">
                     <div class="toolbar-btn-action">
-                        <a class="btn btn-primary m-r-5" href="/authorized/add"><i class="mdi mdi-plus"></i> 新增</a>
+                        <a class="btn btn-primary m-r-5" href="/article/create"><i class="mdi mdi-plus"></i> 新增</a>
                     </div>
                 </div>
 
@@ -27,11 +27,14 @@
                             <thead>
                             <tr>
                                 <th>编号</th>
-                                <th>调用方</th>
-                                <th>对接人</th>
-                                <th>创建日期</th>
-                                <th>更新日期</th>
+                                <th>分类ID/名称</th>
+                                <th>标题</th>
+                                <th>简介</th>
+                                <th>正文</th>
+                                <th>主图</th>
+                                <th>排序</th>
                                 <th style="text-align: center; ">状态</th>
+                                <th>更新日期</th>
                                 <th style="text-align: center; ">操作</th>
                             </tr>
                             </thead>
@@ -73,7 +76,7 @@
 
             AjaxForm(
                 "GET",
-                "/api/authorized",
+                "/api/articles",
                 {page: page, page_size: page_size},
                 function () {},
                 function (data) {
@@ -101,39 +104,33 @@
                         });
 
                         $.each(data.list, function (index, value) {
-                            var showUsedBadge = "";
-                            var optionUsedName = "";
+                            var showStatusBadge = "";
 
-                            if (value.is_used === 1) {
+                            if (value.status === 1) {
                                 optionUsedName = '禁用';
                                 showUsedBadge = '<span class="badge badge-success">启用</span></td>'
                             }
 
-                            if (value.is_used === -1) {
+                            if (value.status === -1) {
                                 optionUsedName = '启用';
                                 showUsedBadge = '<span class="badge badge-danger">禁用</span></td>'
                             }
 
                             const tr = '<tr>\n' +
                                 '<td>' + value.id + '</td>\n' +
-                                '<td>' + value.business_key + '</td>\n' +
-                                '<td>' + value.business_developer + '</td>\n' +
-                                '<td>' + value.created_at + '</td>\n' +
+                                '<td>' + value.category_id + '</td>\n' +
+                                '<td>' + value.title + '</td>\n' +
+                                '<td>' + value.short_title + '</td>\n' +
+                                '<td>' + value.content + '</td>\n' +
+                                '<td>' + value.main_image + '</td>\n' +
+                                '<td>' + value.sort + '</td>\n' +
+                                '<td style="text-align: center; ">' + showStatusBadge + '</td>\n' +
                                 '<td>' + value.updated_at + '</td>\n' +
-                                '<td style="text-align: center; ">' + showUsedBadge + '</td>\n' +
                                 '<td style="text-align: center; ">\n' +
                                 '<div class="btn-group">\n' +
-                                '    <a class="btn btn-xs btn-default btn-detail" href="#!" title=""\n' +
-                                '                                           data-business-key="' + value.business_key + '"' +
-                                '                                           data-business-secret="' + value.business_secret + '"' +
-                                '                                           data-remark="' + value.remark + '"' +
-                                '                                           data-toggle="tooltip" data-original-title="详情">详情</a>\n' +
-                                '    <a class="btn btn-xs btn-default btn-option" href="#!" title=""\n' +
+                                '    <a class="btn btn-xs btn-default btn-offline" href="#!" title=""\n' +
                                 '                                           data-id="' + value.hashid + '"' +
-                                '                                           data-is-used="' + value.is_used + '"' +
-                                '                                           data-toggle="tooltip" data-original-title="' + optionUsedName + '">' + optionUsedName + '</a>\n' +
-                                '    <a class="btn btn-xs btn-default" href="/authorized/api/'+value.hashid+'" title=""\n' +
-                                '                                           data-toggle="tooltip" data-original-title="接口">接口</a>\n' +
+                                '                                           data-toggle="tooltip" data-original-title="编辑">编辑</a>\n' +
                                 '    <a class="btn btn-xs btn-default btn-confirm" href="#!" title=""\n' +
                                 '                                           data-id="' + value.hashid + '"' +
                                 '                                           data-toggle="tooltip" data-original-title="删除">删除</a>\n' +
@@ -145,7 +142,7 @@
                         })
                     } else {
                         // 数据为空
-                        const tr = '<tr><td colspan="7" style="text-align: center">暂无数据</td></tr>';
+                        const tr = '<tr><td colspan="8" style="text-align: center">暂无数据</td></tr>';
                         $(".tbody").append(tr);
                     }
                 },
@@ -155,21 +152,6 @@
 
             );
         }
-
-        // 详情
-        $(document).on('click', '.btn-detail', function () {
-            const business_key = $(this).attr('data-business-key');
-            const business_secret = $(this).attr('data-business-secret');
-            const business_remark = $(this).attr('data-remark');
-
-            $.alert({
-                title: '详情',
-                content: '调用方 KEY ：' + business_key + '<br/>调用方 SECRET ：' + business_secret + '<br/>备注：' + business_remark,
-                type: 'green',
-                animation: 'scale',
-                draggable: true,
-            });
-        });
 
         // 启用/禁用
         $(document).on('click', '.btn-option', function () {
@@ -206,16 +188,128 @@
                         action: function () {
                             AjaxForm(
                                 "PATCH",
-                                "/api/authorized/used",
+                                "/api/admin/used",
                                 patchData,
                                 function () {},
                                 function (data) {
                     data = data.data
+                    data = data.list
                                     $.alert({
                                         title: '操作成功',
                                         icon: 'mdi mdi-check-decagram',
                                         type: 'green',
                                         content: '编号：' + data.id + ' 已' + tipMessage + '。',
+                                        buttons: {
+                                            okay: {
+                                                text: '关闭',
+                                                action: function () {
+                                                    location.reload();
+                                                }
+                                            }
+                                        }
+                                    });
+                                },
+                                function (response) {
+                                    AjaxError(response);
+                                }
+                            );
+                        }
+                    },
+                    cancel: {
+                        text: '取消',
+                        keys: ['ctrl', 'shift'],
+                    }
+                }
+            });
+        });
+
+        // 重置密码
+        $(document).on('click', '.btn-resetPassword', function () {
+            const id = $(this).attr('data-id');
+
+            $.confirm({
+                title: '谨慎操作',
+                content: '确认要 <strong style="color: red">重置密码</strong> 吗？' + '<hr>' + '重置后密码为：123456',
+                icon: 'mdi mdi-alert',
+                animation: 'scale',
+                closeAnimation: 'zoom',
+                buttons: {
+                    okay: {
+                        text: '确认',
+                        keys: ['enter'],
+                        btnClass: 'btn-orange',
+                        action: function () {
+                            AjaxForm(
+                                "PATCH",
+                                '/api/admin/reset_password/' + id,
+                                "",
+                                function () {},
+                                function (data) {
+                    data = data.data
+                    data = data.list
+                                    $.alert({
+                                        title: '操作成功',
+                                        icon: 'mdi mdi-check-decagram',
+                                        type: 'green',
+                                        content: '编号：' + data.id + ' 密码重置完成。',
+                                        buttons: {
+                                            okay: {
+                                                text: '关闭',
+                                                action: function () {
+                                                    location.reload();
+                                                }
+                                            }
+                                        }
+                                    });
+                                },
+                                function (response) {
+                                    AjaxError(response);
+                                }
+                            );
+                        }
+                    },
+                    cancel: {
+                        text: '取消',
+                        keys: ['ctrl', 'shift'],
+                    }
+                }
+            });
+        });
+
+        // 菜单授权
+        $(document).on('click', '.btn-menu', function () {
+            location.href = "/admin/action/" + $(this).attr('data-id');
+        });
+
+        // 下线
+        $(document).on('click', '.btn-offline', function () {
+            const id = $(this).attr('data-id');
+
+            $.confirm({
+                title: '谨慎操作',
+                content: '确认要 <strong style="color: red">下线</strong> 吗？',
+                icon: 'mdi mdi-alert',
+                animation: 'scale',
+                closeAnimation: 'zoom',
+                buttons: {
+                    okay: {
+                        text: '确认',
+                        keys: ['enter'],
+                        btnClass: 'btn-orange',
+                        action: function () {
+                            AjaxForm(
+                                "PATCH",
+                                '/api/admin/offline',
+                                {id: id},
+                                function () {},
+                                function (data) {
+                    data = data.data
+                    data = data.list
+                                    $.alert({
+                                        title: '操作成功',
+                                        icon: 'mdi mdi-check-decagram',
+                                        type: 'green',
+                                        content: '编号：' + data.id + ' 已下线。',
                                         buttons: {
                                             okay: {
                                                 text: '关闭',
@@ -258,11 +352,12 @@
                         action: function () {
                             AjaxForm(
                                 "DELETE",
-                                '/api/authorized/' + id,
+                                '/api/admin/' + id,
                                 "",
                                 function () {},
                                 function (data) {
                     data = data.data
+                    data = data.list
                                     $.alert({
                                         title: '操作成功',
                                         icon: 'mdi mdi-check-decagram',

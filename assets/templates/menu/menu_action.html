@@ -98,6 +98,7 @@
 
                 },
                 function (data) {
+                    data = data.data
                     $("#menuName").html("（菜单栏：" + data.menu_name + "）");
                     if (data.list.length > 0) {
                         var badgeMethodClass = "";

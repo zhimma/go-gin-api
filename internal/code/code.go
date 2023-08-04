@@ -10,9 +10,11 @@ import (
 var ByteCodeFile []byte
 
 // Failure 错误时返回结构
-type Failure struct {
-	Code    int    `json:"code"`    // 业务码
-	Message string `json:"message"` // 描述信息
+type ResponseData struct {
+	Code      int         `json:"code"`    // 业务码
+	Message   string      `json:"message"` // 描述信息
+	RequestId string      `json:"request_id"`
+	Data      interface{} `json:"data"`
 }
 
 const (
