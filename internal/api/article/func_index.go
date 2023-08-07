@@ -3,6 +3,7 @@ package article
 import (
 	"github.com/zhimma/go-gin-api/internal/code"
 	"github.com/zhimma/go-gin-api/internal/pkg/core"
+	"github.com/zhimma/go-gin-api/internal/pkg/validation"
 	"github.com/zhimma/go-gin-api/internal/services/article"
 	"net/http"
 	"time"
@@ -41,13 +42,13 @@ type indexResponse struct {
 // @Router /api/admin/articles [GET]
 func (h *handler) Index() core.HandlerFunc {
 	return func(ctx core.Context) {
-		req := new(article.SearchData)
+		req := new(article.ListData)
 		res := new(indexResponse)
-		if err := ctx.ShouldBindForm(req); err != nil {
+		if err := ctx.ShouldBind(req); err != nil {
 			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
-				code.AdminListError,
-				code.Text(code.AdminListError)).WithError(err))
+				code.ParamBindError,
+				validation.Error(err)).WithError(err))
 			return
 		}
 		pageData, err := h.articleService.Paginate(ctx, req)
@@ -65,17 +66,17 @@ func (h *handler) Index() core.HandlerFunc {
 		res.Pagination.Total = pageData.Pagination.Total
 		res.Pagination.CurrentPage = pageData.Pagination.CurrentPage
 
-		for k, article := range pageData.List {
+		for k, record := range pageData.List {
 			tmpData := listData{
-				Id:         article.Id,
-				CategoryId: article.CategoryId,
-				Title:      article.Title,
-				ShortTitle: article.ShortTitle,
-				MainImage:  article.MainImage,
-				Content:    article.Content,
-				Sort:       article.Sort,
-				Status:     article.Status,
-				UpdatedAt:  article.UpdatedAt,
+				Id:         record.Id,
+				CategoryId: record.CategoryId,
+				Title:      record.Title,
+				ShortTitle: record.ShortTitle,
+				MainImage:  record.MainImage,
+				Content:    record.Content,
+				Sort:       record.Sort,
+				Status:     record.Status,
+				UpdatedAt:  record.UpdatedAt,
 			}
 			res.List[k] = tmpData
 		}

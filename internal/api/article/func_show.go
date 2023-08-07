@@ -3,6 +3,7 @@ package article
 import (
 	"github.com/zhimma/go-gin-api/internal/code"
 	"github.com/zhimma/go-gin-api/internal/pkg/core"
+	"github.com/zhimma/go-gin-api/internal/pkg/validation"
 	"github.com/zhimma/go-gin-api/internal/services/article"
 	"net/http"
 	"time"
@@ -33,16 +34,16 @@ type showResponse struct {
 // @Router /api/admin/articles/{id} [GET]
 func (h *handler) Show() core.HandlerFunc {
 	return func(ctx core.Context) {
-		req := new(article.SearchData)
+		req := new(article.IdData)
 		res := new(showResponse)
 		if err := ctx.ShouldBindURI(&req); err != nil {
 			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,
-				code.AdminListError,
-				code.Text(code.AdminListError)).WithError(err))
+				code.ParamBindError,
+				validation.Error(err)).WithError(err))
 			return
 		}
-		detail, err := h.articleService.Show(ctx, req)
+		detail, err := h.articleService.Show(ctx, req.Id)
 		if err != nil {
 			ctx.AbortWithError(core.Error(
 				http.StatusBadRequest,

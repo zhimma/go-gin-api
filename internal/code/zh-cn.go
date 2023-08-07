@@ -60,4 +60,15 @@ var zhCNText = map[int]string{
 	CronListError:    "获取定时任务列表失败",
 	CronDetailError:  "获取定时任务详情失败",
 	CronExecuteError: "手动执行定时任务失败",
+
+	/*公共定义*/
+	IndexParamsValidateError: "参数验证失败,请检查查询参数",
+	StoreValidateError:       "参数验证失败，请检查新增参数",
+	UpdateValidateError:      "参数验证失败，请检查更新参数",
+
+	RecordNotFound: "记录不存在",
+	StoreError:     "新增失败，请稍后再试",
+	UpdateError:    "更新失败，请稍后再试",
+	DestroyError:   "删除失败，请稍后再试",
+	/*公共定义*/
 }

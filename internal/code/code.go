@@ -21,7 +21,7 @@ const (
 	ServerError        = 10101
 	TooManyRequests    = 10102
 	ParamBindError     = 10103
-	AuthorizationError = 10104
+	AuthorizationError = 10401
 	UrlSignError       = 10105
 	CacheSetError      = 10106
 	CacheGetError      = 10107
@@ -77,6 +77,16 @@ const (
 	CronListError    = 20403
 	CronDetailError  = 20404
 	CronExecuteError = 20405
+
+	IndexParamsValidateError = 40001
+	StoreValidateError       = 40002
+	UpdateValidateError      = 40003
+
+	RecordNotFound = 40404
+
+	StoreError   = 50002
+	UpdateError  = 50003
+	DestroyError = 50004
 )
 
 func Text(code int) string {

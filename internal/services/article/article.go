@@ -7,7 +7,7 @@ import (
 	"github.com/zhimma/go-gin-api/internal/repository/redis"
 )
 
-type SearchData struct {
+type ListData struct {
 	Id         int32  `form:"id" json:"id"`
 	Page       int    `form:"page" json:"page"`
 	PageSize   int    `form:"page_size" json:"page_size"`
@@ -15,6 +15,25 @@ type SearchData struct {
 	Title      string `form:"title" json:"title"`
 	ShortTitle string `form:"short_title" json:"short_title"`
 	Status     int32  `form:"status" json:"status"`
+}
+
+type IdData struct {
+	Id int32 `uri:"id" form:"id" json:"id" binding:"required"`
+}
+
+type StoreData struct {
+	CategoryId int32  `form:"category_id" json:"category_id" binding:"required"`
+	Title      string `form:"title" json:"title" binding:"required"`
+	ShortTitle string `form:"short_title" json:"short_title" binding:"required"`
+	MainImage  string `form:"main_image" json:"main_image" binding:"required"` // 主图
+	Content    string `form:"content" json:"content" binding:"required"`       // 正文
+	Sort       int32  `form:"sort" json:"sort" binding:"required"`             // 排序
+	Status     int32  `form:"status" json:"status" binding:"required"`         // 是否启用 1:是 -1:否
+}
+
+type UpdateData struct {
+	IdData
+	StoreData
 }
 
 // Pagination 分页meta参数
@@ -32,8 +51,11 @@ type PageResult struct {
 
 type Service interface {
 	i()
-	Paginate(ctx core.Context, searchData *SearchData) (result PageResult, err error)
-	Show(ctx core.Context, searchData *SearchData) (result *article.Article, err error)
+	Paginate(ctx core.Context, listData *ListData) (result PageResult, err error)
+	Show(ctx core.Context, id int32) (result *article.Article, err error)
+	Store(ctx core.Context, storeData *StoreData) (id int32, err error)
+	Update(ctx core.Context, id int32, updateData *UpdateData) (err error)
+	Destroy(ctx core.Context, id int32) (err error)
 }
 
 type service struct {
@@ -41,13 +63,13 @@ type service struct {
 	cache redis.Repo
 }
 
-func (s *service) Paginate(ctx core.Context, searchData *SearchData) (result PageResult, err error) {
-	page := searchData.Page
+func (s *service) Paginate(ctx core.Context, listData *ListData) (result PageResult, err error) {
+	page := listData.Page
 	if page == 0 {
 		page = 1
 	}
 
-	pageSize := searchData.PageSize
+	pageSize := listData.PageSize
 	if pageSize == 0 {
 		pageSize = 10
 	}
@@ -58,20 +80,20 @@ func (s *service) Paginate(ctx core.Context, searchData *SearchData) (result Pag
 
 	qb := article.NewQueryBuilder()
 	qb.WhereIsDeleted(mysql.EqualPredicate, -1)
-	if searchData.Title != "" {
-		qb.WhereCategoryId(mysql.EqualPredicate, searchData.CategoryId)
+	if listData.Title != "" {
+		qb.WhereCategoryId(mysql.EqualPredicate, listData.CategoryId)
 	}
 
-	if searchData.Title != "" {
-		qb.WhereTitle(mysql.LikePredicate, searchData.Title)
+	if listData.Title != "" {
+		qb.WhereTitle(mysql.LikePredicate, listData.Title)
 	}
 
-	if searchData.ShortTitle != "" {
-		qb.WhereShortTitle(mysql.LikePredicate, searchData.ShortTitle)
+	if listData.ShortTitle != "" {
+		qb.WhereShortTitle(mysql.LikePredicate, listData.ShortTitle)
 	}
 
-	if searchData.Status != 0 {
-		qb.WhereStatus(mysql.LikePredicate, searchData.Status)
+	if listData.Status != 0 {
+		qb.WhereStatus(mysql.LikePredicate, listData.Status)
 	}
 	result.Pagination.Total, err = qb.Count(s.db.GetDbR().WithContext(ctx.RequestContext()))
 	if err != nil {
@@ -88,12 +110,14 @@ func (s *service) Paginate(ctx core.Context, searchData *SearchData) (result Pag
 	return
 }
 
-func (s *service) Show(ctx core.Context, searchData *SearchData) (result *article.Article, err error) {
+func (s *service) Show(ctx core.Context, id int32) (result *article.Article, err error) {
 	qb := article.NewQueryBuilder()
 	qb.WhereIsDeleted(mysql.EqualPredicate, -1)
 
-	if searchData.Id != 0 {
-		qb.WhereId(mysql.EqualPredicate, searchData.Id)
+	if id != 0 {
+		qb.WhereId(mysql.EqualPredicate, id)
+	} else {
+		return
 	}
 
 	result, err = qb.QueryOne(s.db.GetDbR().WithContext(ctx.RequestContext()))
@@ -101,6 +125,59 @@ func (s *service) Show(ctx core.Context, searchData *SearchData) (result *articl
 		return nil, err
 	}
 	return
+}
+
+func (s *service) Store(ctx core.Context, data *StoreData) (id int32, err error) {
+	model := article.NewModel()
+	model.CategoryId = data.CategoryId
+	model.Title = data.Title
+	model.ShortTitle = data.ShortTitle
+	model.MainImage = data.MainImage
+	model.Content = data.Content
+	model.Sort = data.Sort
+	model.Status = data.Status
+	model.CreatedUser = ctx.SessionUserInfo().UserName
+	model.UpdatedUser = ctx.SessionUserInfo().UserName
+	model.IsDeleted = -1
+	id, err = model.Create(s.db.GetDbW().WithContext(ctx.RequestContext()))
+	if err != nil {
+		return 0, err
+	}
+	return
+}
+
+func (s *service) Update(ctx core.Context, id int32, updateData *UpdateData) (err error) {
+	qb := article.NewQueryBuilder()
+	data := map[string]interface{}{
+		"category_id":  updateData.CategoryId,
+		"title":        updateData.Title,
+		"short_title":  updateData.ShortTitle,
+		"main_image":   updateData.MainImage,
+		"content":      updateData.Content,
+		"sort":         updateData.Sort,
+		"status":       updateData.Status,
+		"updated_user": ctx.SessionUserInfo().UserName,
+	}
+	qb.WhereId(mysql.EqualPredicate, id)
+	err = qb.Updates(s.db.GetDbW().WithContext(ctx.RequestContext()), data)
+	if err != nil {
+		return err
+	}
+	return
+}
+func (s *service) Destroy(ctx core.Context, id int32) (err error) {
+	qb := article.NewQueryBuilder()
+	data := map[string]interface{}{
+		"is_deleted":   1,
+		"updated_user": ctx.SessionUserInfo().UserName,
+	}
+
+	qb.WhereId(mysql.EqualPredicate, id)
+	err = qb.Updates(s.db.GetDbW().WithContext(ctx.RequestContext()), data)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 func (s *service) i() {}
 

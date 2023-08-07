@@ -104,5 +104,8 @@ func setApiRouter(r *resource) {
 		articleHandler := article.New(r.logger, r.db, r.cache)
 		api.GET("/articles", articleHandler.Index())
 		api.GET("/articles/:id", articleHandler.Show())
+		api.POST("/articles", articleHandler.Store())
+		api.PUT("/articles/:id", articleHandler.Update())
+		api.DELETE("/articles/:id", articleHandler.Destroy())
 	}
 }
